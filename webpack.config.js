@@ -74,10 +74,10 @@ module.exports = {
 					plugins: ['transform-object-rest-spread']
 				}
 			},
-			{
-				test: /\.json$/,
-				loader: 'json-loader'
-			},
+			// {
+			// 	test: /\.json$/,
+			// 	loader: 'json-loader'
+			// },
 			{
 				test: /\.(jpg|png|svg)$/,
 				loader: 'file-loader',

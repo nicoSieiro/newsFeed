@@ -1,10 +1,56 @@
 import React, { Component } from 'react';
+import turbo from 'turbo360';
+
+const initialFeeds = [{
+    name:'hacker-news',
+    url:'https://medium.com/feed/hacker-daily/tagged/hacker-news'
+},
+{
+    name:'hacker-news',
+    url:'https://medium.com/feed/hacker-daily/tagged/hacker-news'
+}]
 
 class Sidebar extends Component {
-    // constructor(props) {
-    //     super(props);
-    //     this.state = {  }
-    // }
+    constructor(props) {
+        super(props);
+        this.state = {
+            feeds:[],
+            feed:{
+                name:'',
+                url:''
+            }
+        };
+    }
+
+
+    updateFeed(field, event){
+        let feed = Object.assign({}, this.state.feed);
+        feed[field] = event.target.value;
+
+        this.setState({
+            feed: feed
+        });
+    };
+
+    addFeed(event){
+        event.preventDefault();
+        //TODO: Create bk endpoint in order to persist the data
+        var turboClient = turbo({
+            site_id: '5cadfcfd5d20970015d8c4a4'
+        })
+        
+        turboClient.create('feed', this.state.feed)
+        .then(data => {
+            console.log(data)
+            let feeds = Object.assign([], this.state.feeds);
+            feeds.push(data);
+            this.setState({ feeds: feeds });
+        })
+        .catch(err => {
+            alert(err)
+        })
+    }
+
     render() { 
         return ( 
             <div id="sidebar">
@@ -12,7 +58,9 @@ class Sidebar extends Component {
 
                     <section id="search" className="alt">
                         <form method="post" action="#">
-                            <input type="text" name="query" id="query" placeholder="Search" />
+                            <input onChange={this.updateFeed.bind(this, 'name')} type="text" name="query" id="query" placeholder="Feed Name" /><br />
+                            <input onChange={this.updateFeed.bind(this, 'url')} type="text" name="query" id="query" placeholder="Feed URL" /><br />
+                            <button onClick={this.addFeed.bind(this)}>Add Feed</button>
                         </form>
                     </section>
 
@@ -21,13 +69,11 @@ class Sidebar extends Component {
                             <h2>My feeds</h2>
                         </header>
                         <ul>
-                            <li><a href="index.html">Homepage</a></li>
-                            <li><a href="generic.html">Generic</a></li>
-                            <li><a href="elements.html">Elements</a></li>
-                            <li><a href="#">Etiam Dolore</a></li>
-                            <li><a href="#">Adipiscing</a></li>
-                            <li><a href="#">Sapien Mauris</a></li>
-                            <li><a href="#">Amet Lacinia</a></li>
+                            {
+                                this.state.feeds.map((feed, i) => {
+                                    return <li key = {feed.id}><a href="#">{feed.name}</a></li>
+                                })
+                            }
                         </ul>
                     </nav>
                     
