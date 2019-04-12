@@ -1,14 +1,8 @@
 import React, { Component } from 'react';
 import turbo from 'turbo360';
+import { connect } from 'react-redux';
+import actions from '../actions'
 
-const initialFeeds = [{
-    name:'hacker-news',
-    url:'https://medium.com/feed/hacker-daily/tagged/hacker-news'
-},
-{
-    name:'hacker-news',
-    url:'https://medium.com/feed/hacker-daily/tagged/hacker-news'
-}]
 
 class Sidebar extends Component {
     constructor(props) {
@@ -22,6 +16,15 @@ class Sidebar extends Component {
         };
     }
 
+    componentDidMount() {
+        this.props.fetchFeeds(null)
+        .then(data => {
+            console.log(data)
+        })
+        .catch(err => {
+            alert(err)
+        })
+    }
 
     updateFeed(field, event){
         let feed = Object.assign({}, this.state.feed);
@@ -43,7 +46,7 @@ class Sidebar extends Component {
         .then(data => {
             console.log(data)
             let feeds = Object.assign([], this.state.feeds);
-            feeds.push(data);
+            feeds.unshift(data);
             this.setState({ feeds: feeds });
         })
         .catch(err => {
@@ -52,6 +55,8 @@ class Sidebar extends Component {
     }
 
     render() { 
+        const feeds = this.props.feed.all || [];
+
         return ( 
             <div id="sidebar">
                 <div className="inner">
@@ -70,7 +75,7 @@ class Sidebar extends Component {
                         </header>
                         <ul>
                             {
-                                this.state.feeds.map((feed, i) => {
+                                feeds.map((feed, i) => {
                                     return <li key = {feed.id}><a href="#">{feed.name}</a></li>
                                 })
                             }
@@ -82,5 +87,17 @@ class Sidebar extends Component {
         );
     }
 }
- 
-export default Sidebar;
+
+const stateToProps = (state) => {
+    return {
+        feed: state.feed
+    }
+}
+
+const dispatchToProps = (dispatch) => {
+    return {
+        fetchFeeds: (params) => dispatch(actions.fetchFeeds(params))
+    }
+}
+
+export default connect(stateToProps, dispatchToProps)(Sidebar);
