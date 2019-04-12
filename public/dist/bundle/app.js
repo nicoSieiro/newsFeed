@@ -171,7 +171,8 @@ Object.defineProperty(exports, "__esModule", {
 */
 
 exports.default = {
-	FEEDS_RECEIVED: 'FEEDS_RECEIVED'
+	FEEDS_RECEIVED: 'FEEDS_RECEIVED',
+	FEED_CREATED: 'FEED_CREATED'
 	// USERS_RECEIVED: 		'USERS_RECEIVED',
 	// USER_CREATED: 			'USER_CREATED',
 	// USER_LOGGED_IN: 		'USER_LOGGED_IN',
@@ -404,10 +405,6 @@ var _react = __webpack_require__(4);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _turbo = __webpack_require__(97);
-
-var _turbo2 = _interopRequireDefault(_turbo);
-
 var _reactRedux = __webpack_require__(93);
 
 var _actions = __webpack_require__(505);
@@ -465,16 +462,13 @@ var Sidebar = function (_Component) {
             var _this2 = this;
 
             event.preventDefault();
-            //TODO: Create bk endpoint in order to persist the data
-            var turboClient = (0, _turbo2.default)({
-                site_id: '5cadfcfd5d20970015d8c4a4'
-            });
-
-            turboClient.create('feed', this.state.feed).then(function (data) {
-                console.log(data);
-                var feeds = Object.assign([], _this2.state.feeds);
-                feeds.unshift(data);
-                _this2.setState({ feeds: feeds });
+            this.props.createFeed(this.state.feed).then(function (data) {
+                _this2.setState({
+                    feed: {
+                        name: '',
+                        url: ''
+                    }
+                });
             }).catch(function (err) {
                 alert(err);
             });
@@ -496,9 +490,9 @@ var Sidebar = function (_Component) {
                         _react2.default.createElement(
                             'form',
                             { method: 'post', action: '#' },
-                            _react2.default.createElement('input', { onChange: this.updateFeed.bind(this, 'name'), type: 'text', name: 'query', id: 'query', placeholder: 'Feed Name' }),
+                            _react2.default.createElement('input', { onChange: this.updateFeed.bind(this, 'name'), value: this.state.feed.name, type: 'text', name: 'query', id: 'query', placeholder: 'Feed Name' }),
                             _react2.default.createElement('br', null),
-                            _react2.default.createElement('input', { onChange: this.updateFeed.bind(this, 'url'), type: 'text', name: 'query', id: 'query', placeholder: 'Feed URL' }),
+                            _react2.default.createElement('input', { onChange: this.updateFeed.bind(this, 'url'), value: this.state.feed.url, type: 'text', name: 'query', id: 'query', placeholder: 'Feed URL' }),
                             _react2.default.createElement('br', null),
                             _react2.default.createElement(
                                 'button',
@@ -553,6 +547,9 @@ var dispatchToProps = function dispatchToProps(dispatch) {
     return {
         fetchFeeds: function fetchFeeds(params) {
             return dispatch(_actions2.default.fetchFeeds(params));
+        },
+        createFeed: function createFeed(params) {
+            return dispatch(_actions2.default.createFeed(params));
         }
     };
 };
@@ -887,6 +884,12 @@ exports.default = {
 	fetchFeeds: function fetchFeeds(params) {
 		return function (dispatch) {
 			return dispatch(_utils.TurboClient.getRequest('feed', params, _constants2.default.FEEDS_RECEIVED));
+		};
+	},
+
+	createFeed: function createFeed(params) {
+		return function (dispatch) {
+			return dispatch(_utils.TurboClient.postRequest('feed', params, _constants2.default.FEED_CREATED));
 		};
 	}
 
@@ -1393,7 +1396,7 @@ exports.feedReducer = _feedReducer2.default; /* * * * * * * * * * * * * * * * * 
 
 
 Object.defineProperty(exports, "__esModule", {
-	value: true
+  value: true
 });
 
 var _constants = __webpack_require__(288);
@@ -1403,25 +1406,31 @@ var _constants2 = _interopRequireDefault(_constants);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var initialState = {
-	all: null
+  all: null
 };
 
 exports.default = function () {
-	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
-	var action = arguments[1];
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+  var action = arguments[1];
 
-	var newState = Object.assign({}, state);
+  var newState = Object.assign({}, state);
 
-	switch (action.type) {
+  switch (action.type) {
 
-		case _constants2.default.FEEDS_RECEIVED:
-			console.log('feeds_received = ', action.data);
-			newState['all'] = action.data;
-			return newState;
+    case _constants2.default.FEEDS_RECEIVED:
+      newState['all'] = action.data;
+      return newState;
 
-		default:
-			return state;
-	}
+    case _constants2.default.FEED_CREATED:
+      //initialState.all could be null, if so assign [].
+      var all = newState.all ? Object.assign([], newState.all) : [];
+      all.unshift(action.data);
+      newState['all'] = all;
+
+      return newState;
+    default:
+      return state;
+  }
 };
 
 /***/ })

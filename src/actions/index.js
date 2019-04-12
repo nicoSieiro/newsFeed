@@ -10,6 +10,12 @@ export default {
 		};
 	},
 
+	createFeed: (params) => {
+		return dispatch => {
+			return dispatch(TurboClient.postRequest('feed',params,constants.FEED_CREATED));
+		};
+	},
+
 	/*
   // The following are examples of AsyncAction creators (https://redux.js.org/advanced/asyncactions):
   // Feel free to remove and use your own

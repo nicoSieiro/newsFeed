@@ -10,11 +10,17 @@ export default (state = initialState, action) => {
 	switch (action.type) {
 
         case constants.FEEDS_RECEIVED:
-            console.log('feeds_received = ', action.data)
             newState['all'] = action.data
-			return newState
+            return newState;
+            
+        case constants.FEED_CREATED:
+            //initialState.all could be null, if so assign [].
+            let all = (newState.all) ? Object.assign([], newState.all) : [];
+            all.unshift(action.data);
+            newState['all'] = all;
 
+            return newState;
 		default:
-			return state
+			return state;
 	}
 }

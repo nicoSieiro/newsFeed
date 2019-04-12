@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import turbo from 'turbo360';
 import { connect } from 'react-redux';
 import actions from '../actions'
 
@@ -37,17 +36,14 @@ class Sidebar extends Component {
 
     addFeed(event){
         event.preventDefault();
-        //TODO: Create bk endpoint in order to persist the data
-        var turboClient = turbo({
-            site_id: '5cadfcfd5d20970015d8c4a4'
-        })
-        
-        turboClient.create('feed', this.state.feed)
+        this.props.createFeed(this.state.feed)
         .then(data => {
-            console.log(data)
-            let feeds = Object.assign([], this.state.feeds);
-            feeds.unshift(data);
-            this.setState({ feeds: feeds });
+            this.setState({ 
+                feed : {
+                    name : '',
+                    url : ''
+                }
+            });
         })
         .catch(err => {
             alert(err)
@@ -63,8 +59,8 @@ class Sidebar extends Component {
 
                     <section id="search" className="alt">
                         <form method="post" action="#">
-                            <input onChange={this.updateFeed.bind(this, 'name')} type="text" name="query" id="query" placeholder="Feed Name" /><br />
-                            <input onChange={this.updateFeed.bind(this, 'url')} type="text" name="query" id="query" placeholder="Feed URL" /><br />
+                            <input onChange={this.updateFeed.bind(this, 'name')} value={this.state.feed.name} type="text" name="query" id="query" placeholder="Feed Name" /><br />
+                            <input onChange={this.updateFeed.bind(this, 'url')} value={this.state.feed.url} type="text" name="query" id="query" placeholder="Feed URL" /><br />
                             <button onClick={this.addFeed.bind(this)}>Add Feed</button>
                         </form>
                     </section>
@@ -96,7 +92,8 @@ const stateToProps = (state) => {
 
 const dispatchToProps = (dispatch) => {
     return {
-        fetchFeeds: (params) => dispatch(actions.fetchFeeds(params))
+        fetchFeeds: (params) => dispatch(actions.fetchFeeds(params)),
+        createFeed: (params) => dispatch(actions.createFeed(params))
     }
 }
 
