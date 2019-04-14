@@ -16,6 +16,13 @@ export default {
 		};
 	},
 
+	selectFeed : (feed) => {
+		return {
+			type : constants.SELECTED_FEED,
+			data : feed,
+		}
+	}
+
 	/*
   // The following are examples of AsyncAction creators (https://redux.js.org/advanced/asyncactions):
   // Feel free to remove and use your own

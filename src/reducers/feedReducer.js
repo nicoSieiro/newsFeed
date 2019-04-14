@@ -1,7 +1,8 @@
 import constants from '../constants'
 
 var initialState = {
-	all: null,
+    all: null,
+    selected: null,
 }
 
 export default (state = initialState, action) => {
@@ -18,9 +19,13 @@ export default (state = initialState, action) => {
             let all = (newState.all) ? Object.assign([], newState.all) : [];
             all.unshift(action.data);
             newState['all'] = all;
-
             return newState;
-		default:
+
+        case constants.SELECTED_FEED:
+            newState['selected'] = action.data;
+            return newState;
+            
+        default:
 			return state;
 	}
 }

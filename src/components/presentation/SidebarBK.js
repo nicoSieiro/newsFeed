@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import actions from '../actions'
-
+import {Feeds} from '../containers/index';
 
 class Sidebar extends Component {
     constructor(props) {
@@ -13,16 +11,6 @@ class Sidebar extends Component {
                 url:''
             }
         };
-    }
-
-    componentDidMount() {
-        this.props.fetchFeeds(null)
-        .then(data => {
-            console.log(data)
-        })
-        .catch(err => {
-            alert(err)
-        })
     }
 
     updateFeed(field, event){
@@ -51,7 +39,6 @@ class Sidebar extends Component {
     }
 
     render() { 
-        const feeds = this.props.feed.all || [];
 
         return ( 
             <div id="sidebar">
@@ -69,13 +56,7 @@ class Sidebar extends Component {
                         <header className="major">
                             <h2>My feeds</h2>
                         </header>
-                        <ul>
-                            {
-                                feeds.map((feed, i) => {
-                                    return <li key = {feed.id}><a href="#">{feed.name}</a></li>
-                                })
-                            }
-                        </ul>
+                        <Feeds/>
                     </nav>
                     
                 </div>
@@ -84,17 +65,4 @@ class Sidebar extends Component {
     }
 }
 
-const stateToProps = (state) => {
-    return {
-        feed: state.feed
-    }
-}
-
-const dispatchToProps = (dispatch) => {
-    return {
-        fetchFeeds: (params) => dispatch(actions.fetchFeeds(params)),
-        createFeed: (params) => dispatch(actions.createFeed(params))
-    }
-}
-
-export default connect(stateToProps, dispatchToProps)(Sidebar);
+export default Sidebar;
