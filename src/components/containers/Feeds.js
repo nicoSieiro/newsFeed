@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import actions from '../../actions'
+import actions from '../../actions';
+import {HTTPClient} from '../../utils/';
 
 class Feeds extends Component {
     constructor(props){
@@ -27,6 +28,24 @@ class Feeds extends Component {
     selectFeed(feed, event){
         event.preventDefault();
         this.props.selectFeed(feed);
+
+        if (this.props.rss[feed.url] != null) {
+            return console.log(this.props.rss[feed.url])
+        }
+
+        //https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/hacker-daily/tagged/hacker-news
+        const endpoint = 'https://api.rss2json.com/v1/api.json';
+        const params = {
+            rss_url : feed.url
+        }
+
+        this.props.fetchRssFeed(endpoint, params)
+        .then(data => {
+            console.log("rssFeedReached: ", data)
+        })
+        .catch(err => {
+            alert(err)
+        })
     }
 
     render() {
@@ -46,7 +65,8 @@ class Feeds extends Component {
 
 const stateToProps = (state) => {
     return {
-        feed: state.feed
+        feed: state.feed,
+        rss: state.rss
     }
 }
 
@@ -54,7 +74,8 @@ const dispatchToProps = (dispatch) => {
     return {
         fetchFeeds: (params) => dispatch(actions.fetchFeeds(params)),
         createFeed: (params) => dispatch(actions.createFeed(params)),
-        selectFeed: (feed) => dispatch(actions.selectFeed(feed))
+        selectFeed: (feed) => dispatch(actions.selectFeed(feed)),
+        fetchRssFeed: (url, params) => dispatch(actions.fetchRssFeed(url, params))
     }
 }
 

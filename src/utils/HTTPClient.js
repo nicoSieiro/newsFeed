@@ -78,13 +78,13 @@ const deleteReq = (endpoint, params, headers) => {
 
 export default {
 	get: get,
-	// getAsync: (endpoint, params, headers, actionType) => {
-	getAsync: (pkg) => {
-		return (dispatch) => get(pkg.endpoint, pkg.params, pkg.headers)
+	getAsync: (endpoint, params, headers, actionType) => {
+	//getAsync: (pkg) => {
+		return (dispatch) => get(endpoint, params, headers)
 			.then(response => {
-				if (pkg.actionType != null){
+				if (actionType != null){
 					dispatch({
-						type: pkg.actionType,
+						type: actionType,
 						data: response
 					})
 				}

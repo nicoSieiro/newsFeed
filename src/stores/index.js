@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware, combineReducers } from 'redux'
 import thunk from 'redux-thunk'
-import { feedReducer } from '../reducers'
+import { feedReducer, rssReducer } from '../reducers'
 
 var store
 export default {
@@ -9,6 +9,7 @@ export default {
 		
 		const reducers = combineReducers({ // insert reducers here
 			feed: feedReducer,
+			rss: rssReducer
 		})
 
 		if (initialState){

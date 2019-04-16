@@ -1,9 +1,15 @@
 import constants from '../constants'
-import { TurboClient } from '../utils'
+import { TurboClient, HTTPClient } from '../utils'
 
 
 export default {
 	
+	fetchRssFeed: (url, params) => {
+		return dispatch => {
+			return dispatch(HTTPClient.getAsync(url, params, null, constants.RSS_FEED_RECIVED));
+		}
+	},
+
 	fetchFeeds: (params) => {
 		return dispatch => {
 			return dispatch(TurboClient.getRequest('feed', params, constants.FEEDS_RECEIVED));
