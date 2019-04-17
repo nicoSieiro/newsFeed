@@ -29,7 +29,11 @@ class Feeds extends Component {
         event.preventDefault();
         this.props.selectFeed(feed);
 
-        if (this.props.rss[feed.url] != null) {
+        const items = this.props.rss[feed.url];
+
+        //TODO: check if there is an update every 15' or so;
+
+        if (items != null) { //we already have the data!
             return console.log(this.props.rss[feed.url])
         }
 
@@ -47,7 +51,6 @@ class Feeds extends Component {
             alert(err)
         })
     }
-
     render() {
         const feeds = this.props.feed.all || [];
 
